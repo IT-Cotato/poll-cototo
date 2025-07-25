@@ -1,9 +1,6 @@
 package org.cotato.poll.polltato.domain.poll.service;
 
-import java.util.concurrent.CompletableFuture;
-
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -19,21 +16,13 @@ public class MailService {
 	@Value("${app.base-url}")
 	private String baseUrl;
 
-	@Async("mailTaskExecutor")
-	public CompletableFuture<Void> sendPollNotificationMail(String toEmail, String pollTitle, String workspaceName,
+	public void sendPollNotificationMail(String toEmail, String pollTitle, String workspaceName,
 		Long pollId, String sessionKey) {
-		return CompletableFuture.runAsync(() -> {
-				String pollUrl = generatePollUrl(toEmail, sessionKey, pollId);
-				String htmlBody = createHtmlEmailBody(workspaceName, pollTitle, pollUrl);
-				String subject = createEmailSubject(workspaceName, pollTitle);
+		String pollUrl = generatePollUrl(toEmail, sessionKey, pollId);
+		String htmlBody = createHtmlEmailBody(workspaceName, pollTitle, pollUrl);
+		String subject = createEmailSubject(workspaceName, pollTitle);
 
-				emailSender.sendEmail(toEmail, htmlBody, subject);
-			})
-			.thenRun(() -> log.info("Poll notification email sent successfully to: {}", toEmail))
-			.exceptionally(ex -> {
-				log.error("Failed to send poll notification email to: {}", toEmail, ex);
-				return null;
-			});
+		emailSender.sendEmail(toEmail, htmlBody, subject);
 	}
 
 	private String generatePollUrl(String email, String sessionKey, Long pollId) {

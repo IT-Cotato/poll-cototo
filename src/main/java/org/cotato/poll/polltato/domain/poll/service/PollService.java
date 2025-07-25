@@ -1,9 +1,6 @@
 package org.cotato.poll.polltato.domain.poll.service;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 import org.cotato.poll.polltato.domain.poll.entity.Poll;
 import org.cotato.poll.polltato.domain.poll.enums.PollStatus;
@@ -88,20 +85,17 @@ public class PollService {
 
 		log.info("Starting to send poll notification emails to {} users for poll ID: {}", users.size(), pollId);
 
-		Collection<CompletableFuture<Void>> emailFutures = new ArrayList<>(users.size());
 		for (User user : users) {
 			String sessionKey = sessionKeyGenerator.generateSessionKey(user.getEmail(), pollId);
 			user.updateSessionKey(sessionKey);
-			CompletableFuture<Void> task = mailService.sendPollNotificationMail(
+			mailService.sendPollNotificationMail(
 				user.getEmail(),
 				pollTitle,
 				workspaceName,
 				pollId,
 				sessionKey
 			);
-			emailFutures.add(task);
 		}
-		CompletableFuture<Void> allOf = CompletableFuture.allOf(emailFutures.toArray(new CompletableFuture[0]));
-		allOf.join(); // Wait for all emails to be sent
+
 	}
 }
