@@ -2,10 +2,13 @@ package org.cotato.poll.polltato.domain.poll.service;
 
 import java.util.List;
 
+import org.cotato.poll.polltato.domain.poll.entity.Poll;
 import org.cotato.poll.polltato.domain.poll.repository.PollRepository;
 import org.cotato.poll.polltato.domain.poll.service.dto.PollDto;
 import org.cotato.poll.polltato.domain.team.entity.Workspace;
 import org.cotato.poll.polltato.domain.team.repostiroy.WorkspaceRepository;
+import org.cotato.poll.polltato.global.excepction.BusinessException;
+import org.cotato.poll.polltato.global.excepction.ErrorCode;
 import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -26,5 +29,16 @@ public class PollService {
 		return pollRepository.findAllByWorkspace(workspace).stream()
 			.map(PollDto::from)
 			.toList();
+	}
+
+	public PollDto getPoll(final Long workspaceId, final Long pollId) {
+		Poll poll = pollRepository.findById(pollId).orElseThrow(() -> new EntityNotFoundException(
+			"Poll not found with id: " + pollId + " in workspace: " + workspaceId));
+
+		if (!poll.getWorkspace().getId().equals(workspaceId)) {
+			throw new BusinessException(ErrorCode.NOT_IN_WORKSPACE);
+		}
+
+		return PollDto.from(poll);
 	}
 }

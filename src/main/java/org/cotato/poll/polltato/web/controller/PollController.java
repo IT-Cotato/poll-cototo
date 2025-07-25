@@ -27,4 +27,11 @@ public class PollController {
 	public ResponseEntity<List<PollDto>> getPolls(@PathVariable("workspaceId") final Long workspaceId) {
 		return ResponseEntity.ok(pollService.getPolls(workspaceId));
 	}
+
+	@Operation(summary = "워크스페이스 내 특정 투표 조회", description = "워크스페이스 내 특정 투표를 조회합니다.")
+	@GetMapping("/{pollId}")
+	public ResponseEntity<PollDto> getPoll(@PathVariable("workspaceId") final Long workspaceId,
+		@PathVariable("pollId") final Long pollId) {
+		return ResponseEntity.ok(pollService.getPoll(workspaceId, pollId));
+	}
 }
