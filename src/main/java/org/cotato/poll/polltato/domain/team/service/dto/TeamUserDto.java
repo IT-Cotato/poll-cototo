@@ -20,6 +20,8 @@ public class TeamUserDto {
 
 	private Long teamId;
 
+	private String teamName;
+
 	private Role role;
 
 	public static TeamUserDto from(TeamUser teamUser) {
@@ -28,6 +30,7 @@ public class TeamUserDto {
 			.userId(teamUser.getUserId())
 			.teamId(teamUser.getTeam().getId())
 			.role(teamUser.getRole())
+			.teamName(teamUser.getTeam().getName())
 			.build();
 	}
 }
