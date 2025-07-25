@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -43,6 +44,14 @@ public class PollController {
 	public ResponseEntity<?> updatePollStatus(@PathVariable("pollId") final Long pollId,
 		@RequestParam("status") PollStatus status) {
 		pollService.updatePollStatus(pollId, status);
+		return ResponseEntity.ok().build();
+	}
+
+	@Operation(summary = "특정 투표에 참여한 인원에게 투표 안내 메일 발송", description = "특정 투표에 참여한 인원에게 투표 안내 메일을 발송합니다.")
+	@PostMapping("/{pollId}/send-notification")
+	public ResponseEntity<Void> sendPollNotification(@PathVariable("workspaceId") final Long workspaceId,
+		@PathVariable("pollId") final Long pollId) {
+		pollService.sendPollNotification(workspaceId, pollId);
 		return ResponseEntity.ok().build();
 	}
 }
