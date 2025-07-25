@@ -41,10 +41,14 @@ public class Poll extends BaseTimeEntity {
 	private Integer totalScore;
 
 	@Enumerated(EnumType.STRING)
-	private PollStatus status;
+	@Builder.Default
+	private PollStatus status = PollStatus.OFF;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "workspace_id", nullable = false)
 	private Workspace workspace;
 
+	public void updateStatus(PollStatus status) {
+		this.status = status;
+	}
 }

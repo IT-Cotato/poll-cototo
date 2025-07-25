@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum PollStatus {
-	DRAFT("초안"),
+	OFF("초안"),
 	ACTIVE("진행중"),
 	CLOSED("종료");
 

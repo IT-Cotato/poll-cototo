@@ -2,12 +2,15 @@ package org.cotato.poll.polltato.web.controller;
 
 import java.util.List;
 
+import org.cotato.poll.polltato.domain.poll.enums.PollStatus;
 import org.cotato.poll.polltato.domain.poll.service.PollService;
 import org.cotato.poll.polltato.domain.poll.service.dto.PollDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,5 +36,13 @@ public class PollController {
 	public ResponseEntity<PollDto> getPoll(@PathVariable("workspaceId") final Long workspaceId,
 		@PathVariable("pollId") final Long pollId) {
 		return ResponseEntity.ok(pollService.getPoll(workspaceId, pollId));
+	}
+
+	@Operation(summary = "투표 상태 변경", description = "투표의 상태를 변경합니다. (예: 시작, 종료)")
+	@PatchMapping("/{pollId}/status")
+	public ResponseEntity<?> updatePollStatus(@PathVariable("pollId") final Long pollId,
+		@RequestParam("status") PollStatus status) {
+		pollService.updatePollStatus(pollId, status);
+		return ResponseEntity.ok().build();
 	}
 }
