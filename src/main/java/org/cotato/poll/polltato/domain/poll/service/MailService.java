@@ -3,12 +3,9 @@ package org.cotato.poll.polltato.domain.poll.service;
 import java.util.concurrent.CompletableFuture;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,10 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class MailService {
 
-	private final JavaMailSender mailSender;
-
-	@Value("${spring.mail.username}")
-	private String fromEmail;
+	private final EmailSender emailSender;
 
 	@Value("${app.base-url}")
 	private String baseUrl;
@@ -33,7 +27,7 @@ public class MailService {
 				String htmlBody = createHtmlEmailBody(workspaceName, pollTitle, pollUrl);
 				String subject = createEmailSubject(workspaceName, pollTitle);
 
-				sendMimeMessage(toEmail, subject, htmlBody);
+				emailSender.sendEmail(toEmail, htmlBody, subject);
 			})
 			.thenRun(() -> log.info("Poll notification email sent successfully to: {}", toEmail))
 			.exceptionally(ex -> {
@@ -100,21 +94,5 @@ public class MailService {
 				"</html>",
 			workspaceName, pollTitle, pollUrl
 		);
-	}
-
-	private void sendMimeMessage(String toEmail, String subject, String htmlBody) {
-		try {
-			MimeMessage message = mailSender.createMimeMessage();
-			MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-
-			helper.setFrom(fromEmail);
-			helper.setTo(toEmail);
-			helper.setSubject(subject);
-			helper.setText(htmlBody, true);
-
-			mailSender.send(message);
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to create or send mime message", e);
-		}
 	}
 } 
