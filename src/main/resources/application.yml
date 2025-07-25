@@ -22,12 +22,19 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: ${MAIL_USERNAME:test@example.com}
+    username: ${MAIL_USERNAME}
     password: ${MAIL_PASSWORD}
     properties:
       mail:
         smtp:
-          auth: ${MAIL_AUTH:false}
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connection-timeout: 5000
+          timeout: 5000
+          write timeout: 5000
+    auth-code-expiration-millis: 1800000
 
 app:
   base-url: ${BASE_URL:http://localhost:8080}

@@ -19,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class EmailSender {
 
-	private static final String SENDER_EMAIL = "boysoeng@naver.com";
+	private static final String SENDER_EMAIL = "itcotato@gmail.com";
 
 	private static final String SENDER_PERSONAL = "Polltato";
 
