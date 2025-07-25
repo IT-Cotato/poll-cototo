@@ -22,8 +22,7 @@ public class TeamUserController {
 	@GetMapping("/me")
 	public ResponseEntity<TeamUserDto> getTeamUserInformation(
 		@RequestParam("email") final String email,
-		@RequestParam("sessionKey") final String sessionKey,
 		@RequestParam("pollId") final Long pollId) {
-		return ResponseEntity.ok(teamUserService.getTeamUserInformation(email, sessionKey, pollId));
+		return ResponseEntity.ok(teamUserService.getTeamUserInformation(email, pollId));
 	}
 }

@@ -21,8 +21,8 @@ public class TeamUserService {
 
 	private final UserService userService;
 
-	public TeamUserDto getTeamUserInformation(final String email, final String sessionKey, final Long pollId) {
-		UserDto userDto = userService.getUserByEmailAndKey(email, sessionKey);
+	public TeamUserDto getTeamUserInformation(final String email, final Long pollId) {
+		UserDto userDto = userService.getUserByEmail(email);
 
 		Poll poll = pollRepository.findById(pollId)
 			.orElseThrow(() -> new EntityNotFoundException("Poll not found with id: " + pollId));

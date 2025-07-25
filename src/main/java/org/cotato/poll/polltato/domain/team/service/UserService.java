@@ -28,9 +28,9 @@ public class UserService {
 
 	private final TeamUserRepository teamUserRepository;
 
-	public UserDto getUserByEmailAndKey(final String email, final String key) {
-		User user = userRepository.findByEmailAndSessionKey(email, key)
-			.orElseThrow(() -> new EntityNotFoundException("User not found with email: " + email + " and key: " + key));
+	public UserDto getUserByEmail(final String email) {
+		User user = userRepository.findByEmail(email)
+			.orElseThrow(() -> new EntityNotFoundException("User not found with email: " + email));
 		return UserDto.from(user);
 	}
 

@@ -22,7 +22,7 @@ public class UserController {
 	@GetMapping("/me")
 	public ResponseEntity<UserDto> getCurrentUser(@RequestParam("email") final String email,
 		@RequestParam("sessionKey") final String sessionKey) {
-		return ResponseEntity.ok(userService.getUserByEmailAndKey(email, sessionKey));
+		return ResponseEntity.ok(userService.getUserByEmail(email, sessionKey));
 	}
 
 }
