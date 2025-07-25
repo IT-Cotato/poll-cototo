@@ -27,7 +27,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class PollService {
 
-	// private final WorkspaceService workspaceService;
 	private final UserService userService;
 	private final MailService mailService;
 	private final SessionKeyGenerator sessionKeyGenerator;

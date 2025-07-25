@@ -8,7 +8,7 @@ import org.cotato.poll.polltato.domain.team.entity.TeamUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TeamUserRepository extends JpaRepository<TeamUser, Long> {
-	List<TeamUser> findAllByTeam(List<Team> teams);
+	List<TeamUser> findAllByTeamIn(List<Team> teams);
 
 	List<TeamUser> findAllByTeam_WorkspaceId(Long workspaceId);
 

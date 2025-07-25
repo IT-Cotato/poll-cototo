@@ -43,7 +43,7 @@ public class UserService {
 			throw new IllegalArgumentException("No teams found for workspace with id: " + workspaceId);
 		}
 
-		List<Long> userIds = teamUserRepository.findAllByTeam(teams).stream()
+		List<Long> userIds = teamUserRepository.findAllByTeamIn(teams).stream()
 			.map(TeamUser::getUserId)
 			.toList();
 
