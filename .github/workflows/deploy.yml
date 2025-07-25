@@ -116,6 +116,10 @@ jobs:
             -e DB_USERNAME="${{ secrets.DB_USERNAME }}" \
             -e DB_PASSWORD="${{ secrets.DB_PASSWORD }}" \
             -e DB_DDL_AUTO="${{ secrets.DB_DDL_AUTO }}" \
+            -e MAIL_USERNAME="${{ secrets.MAIL_USERNAME }}" \
+            -e MAIL_PASSWORD="${{ secrets.MAIL_PASSWORD }}" \
+            -e MAIL_AUTH="${{ secrets.MAIL_AUTH }}" \
+            -e BASE_URL="${{ secrets.BASE_URL }}" \
             -e JAVA_OPTS="-Xmx512m -Xms256m -XX:+UseG1GC -XX:+UseContainerSupport" \
             -e TZ=Asia/Seoul \
             ${{ secrets.DOCKER_USERNAME }}/polltato:latest

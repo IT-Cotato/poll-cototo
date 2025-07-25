@@ -55,5 +55,13 @@ ENV DB_USERNAME=root
 ENV DB_PASSWORD=
 ENV DB_DDL_AUTO=none
 
+# 메일 설정
+ENV MAIL_USERNAME=test@example.com
+ENV MAIL_PASSWORD=
+ENV MAIL_AUTH=false
+
+# 애플리케이션 기본 URL
+ENV BASE_URL=http://localhost:8080
+
 # 애플리케이션 실행
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"] 
