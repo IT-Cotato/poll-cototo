@@ -37,7 +37,7 @@ spring:
     auth-code-expiration-millis: 1800000
 
 app:
-  base-url: ${BASE_URL:http://localhost:8080}
+  base-url: https://poll.cotato.kr
 
 springdoc:
   api-docs:
@@ -47,3 +47,7 @@ springdoc:
     operations-sorter: alpha
     tags-sorter: alpha
     display-request-duration: true
+
+swagger:
+  base:
+    url: ${BASE_URL:http://localhost:8080}
