@@ -9,4 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface TeamRepository extends JpaRepository<Team, Long> {
 
 	List<Team> findAllByWorkspace(Workspace workspace);
+
+	List<Team> findAllByWorkspaceId(Long workspaceId);
 }
