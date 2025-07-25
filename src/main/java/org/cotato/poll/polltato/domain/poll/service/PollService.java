@@ -62,6 +62,7 @@ public class PollService {
 		poll.updateStatus(status);
 	}
 
+	@Transactional
 	public void sendPollNotification(final Long workspaceId, final Long pollId) {
 		Poll poll = validateAndGetPoll(workspaceId, pollId);
 		List<User> users = userService.getUsersByWorkspaceId(workspaceId);
