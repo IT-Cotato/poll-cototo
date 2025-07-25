@@ -9,11 +9,10 @@ import org.cotato.poll.polltato.domain.poll.entity.Poll;
 import org.cotato.poll.polltato.domain.poll.enums.PollStatus;
 import org.cotato.poll.polltato.domain.poll.repository.PollRepository;
 import org.cotato.poll.polltato.domain.poll.service.dto.PollDto;
+import org.cotato.poll.polltato.domain.team.entity.User;
 import org.cotato.poll.polltato.domain.team.entity.Workspace;
-import org.cotato.poll.polltato.domain.team.repostiroy.TeamUserRepository;
 import org.cotato.poll.polltato.domain.team.repostiroy.WorkspaceRepository;
 import org.cotato.poll.polltato.domain.team.service.UserService;
-import org.cotato.poll.polltato.domain.team.service.dto.UserDto;
 import org.cotato.poll.polltato.global.excepction.BusinessException;
 import org.cotato.poll.polltato.global.excepction.ErrorCode;
 import org.springframework.stereotype.Service;
@@ -34,9 +33,7 @@ public class PollService {
 	private final SessionKeyGenerator sessionKeyGenerator;
 
 	private final WorkspaceRepository workspaceRepository;
-
 	private final PollRepository pollRepository;
-	private final TeamUserRepository teamUserRepository;
 
 	public List<PollDto> getPolls(final Long workspaceId) {
 		Workspace workspace = workspaceRepository.findById(workspaceId)
@@ -68,7 +65,7 @@ public class PollService {
 
 	public void sendPollNotification(final Long workspaceId, final Long pollId) {
 		Poll poll = validateAndGetPoll(workspaceId, pollId);
-		List<UserDto> users = userService.getUsersByWorkspaceId(workspaceId);
+		List<User> users = userService.getUsersByWorkspaceId(workspaceId);
 
 		sendEmailsToAllUsers(users, poll);
 	}
@@ -84,7 +81,7 @@ public class PollService {
 		return poll;
 	}
 
-	private void sendEmailsToAllUsers(List<UserDto> users, Poll poll) {
+	private void sendEmailsToAllUsers(List<User> users, Poll poll) {
 		String workspaceName = poll.getWorkspace().getName();
 		String pollTitle = poll.getTitle();
 		Long pollId = poll.getId();
@@ -92,13 +89,15 @@ public class PollService {
 		log.info("Starting to send poll notification emails to {} users for poll ID: {}", users.size(), pollId);
 
 		Collection<CompletableFuture<Void>> emailFutures = new ArrayList<>(users.size());
-		for (UserDto user : users) {
+		for (User user : users) {
+			String sessionKey = sessionKeyGenerator.generateSessionKey(user.getEmail(), pollId);
+			user.updateSessionKey(sessionKey);
 			CompletableFuture<Void> task = mailService.sendPollNotificationMail(
 				user.getEmail(),
 				pollTitle,
 				workspaceName,
 				pollId,
-				sessionKeyGenerator.generateSessionKey(user.getEmail(), pollId)
+				sessionKey
 			);
 			emailFutures.add(task);
 		}

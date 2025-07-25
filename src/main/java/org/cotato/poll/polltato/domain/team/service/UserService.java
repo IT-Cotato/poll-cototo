@@ -34,7 +34,7 @@ public class UserService {
 		return UserDto.from(user);
 	}
 
-	public List<UserDto> getUsersByWorkspaceId(final Long workspaceId) {
+	public List<User> getUsersByWorkspaceId(final Long workspaceId) {
 		Workspace workspace = workspaceRepository.findById(workspaceId)
 			.orElseThrow(() -> new IllegalArgumentException("Workspace not found with id: " + workspaceId));
 
@@ -47,10 +47,6 @@ public class UserService {
 			.map(TeamUser::getUserId)
 			.toList();
 
-		// return userRepository.findAllById(userIds)
-		// 	.stream()
-		// 	.map(UserDto::from)
-		// 	.toList();
-		return null;
+		return userRepository.findAllById(userIds);
 	}
 }

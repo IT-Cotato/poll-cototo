@@ -30,4 +30,8 @@ public class User extends BaseTimeEntity {
 
 	@Column(unique = true)
 	private String sessionKey;
+
+	public void updateSessionKey(String sessionKey) {
+		this.sessionKey = sessionKey;
+	}
 }
