@@ -13,6 +13,7 @@ import org.cotato.poll.polltato.domain.team.repostiroy.WorkspaceRepository;
 import org.cotato.poll.polltato.domain.team.service.dto.UserDto;
 import org.springframework.stereotype.Service;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -29,8 +30,7 @@ public class UserService {
 
 	public UserDto getUserByEmailAndKey(final String email, final String key) {
 		User user = userRepository.findByEmailAndSessionKey(email, key)
-			.orElseThrow(
-				() -> new IllegalArgumentException("User not found with email: " + email + " and key: " + key));
+			.orElseThrow(() -> new EntityNotFoundException("User not found with email: " + email + " and key: " + key));
 		return UserDto.from(user);
 	}
 

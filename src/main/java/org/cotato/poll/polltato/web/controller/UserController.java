@@ -20,8 +20,8 @@ public class UserController {
 
 	@Operation(summary = "현재 사용자 정보 조회", description = "로그인한 사용자의 정보를 조회합니다.")
 	@GetMapping("/me")
-	public ResponseEntity<UserDto> getCurrentUser(@RequestParam("email") String email,
-		@RequestParam("sessionKey") String sessionKey) {
+	public ResponseEntity<UserDto> getCurrentUser(@RequestParam("email") final String email,
+		@RequestParam("sessionKey") final String sessionKey) {
 		return ResponseEntity.ok(userService.getUserByEmailAndKey(email, sessionKey));
 	}
 
