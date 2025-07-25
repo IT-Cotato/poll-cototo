@@ -22,6 +22,8 @@ public class UserDto {
 	public static UserDto from(User user) {
 		return UserDto.builder()
 			.id(user.getId())
+			.email(user.getEmail())
+			.name(user.getName())
 			.build();
 	}
 }

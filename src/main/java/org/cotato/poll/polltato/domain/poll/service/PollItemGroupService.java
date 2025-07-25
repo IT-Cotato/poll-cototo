@@ -2,6 +2,8 @@ package org.cotato.poll.polltato.domain.poll.service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Map;
 
 import org.cotato.poll.polltato.domain.poll.entity.Poll;
 import org.cotato.poll.polltato.domain.poll.entity.PollItemGroup;
@@ -117,6 +119,48 @@ public class PollItemGroupService {
         voteRepository.save(vote);
     }
 
+    public List<TeamPollScoreResult> calculateTeamPollScores(Long pollId) {
+        Poll poll = pollRepository.findById(pollId)
+            .orElseThrow(() -> new IllegalArgumentException("Poll not found: " + pollId));
+        Long workspaceId = poll.getWorkspace().getId();
+        // 1. 팀 목록
+        List<Team> teams = teamRepository.findAllByWorkspaceId(workspaceId);
+        // 2. PollItemGroup 목록
+        List<PollItemGroup> groups = pollItemGroupRepository.findAllByPollAndRequiredRole(poll, null); // 모든 그룹
+        // 3. PollItemGroup별 PollItem 목록
+        // 4. 팀별 유저 매핑
+        List<TeamUser> teamUsers = teamUserRepository.findAllByTeam_WorkspaceId(workspaceId);
+        // userId -> teamId 매핑
+        Map<Long, Long> userIdToTeamId = teamUsers.stream().collect(Collectors.toMap(TeamUser::getUserId, tu -> tu.getTeam().getId()));
+        // 5. 결과 생성
+        List<TeamPollScoreResult> result = new ArrayList<>();
+        for (Team team : teams) {
+            List<GroupScoreResult> groupResults = new ArrayList<>();
+            for (PollItemGroup group : groups) {
+                if (!group.getPoll().getId().equals(pollId)) continue;
+                List<PollItem> items = pollItemRepository.findAllByPollItemGroup(group);
+                List<ItemScoreResult> itemResults = new ArrayList<>();
+                double groupSum = 0;
+                int groupCount = 0;
+                for (PollItem item : items) {
+                    List<Vote> votes = voteRepository.findAll().stream()
+                        .filter(v -> v.getPollItem().getId().equals(item.getId()))
+                        .filter(v -> userIdToTeamId.getOrDefault(v.getUser().getId(), -1L).equals(team.getId()))
+                        .collect(Collectors.toList());
+                    int sum = votes.stream().mapToInt(Vote::getScore).sum();
+                    double avg = votes.isEmpty() ? 0 : (double) sum / votes.size();
+                    itemResults.add(new ItemScoreResult(item.getId(), item.getTitle(), avg, sum));
+                    groupSum += sum;
+                    groupCount += votes.size();
+                }
+                double groupAvg = groupCount == 0 ? 0 : groupSum / groupCount;
+                groupResults.add(new GroupScoreResult(group.getId(), group.getName(), itemResults, groupAvg, (int) groupSum));
+            }
+            result.add(new TeamPollScoreResult(team.getId(), team.getName(), groupResults));
+        }
+        return result;
+    }
+
     public static class PollItemGroupWithItemsDto {
         public final Long groupId;
         public final String name;
@@ -156,5 +200,42 @@ public class PollItemGroupService {
         public Long pollItemId;
         public Long userId;
         public Integer score;
+    }
+
+    public static class TeamPollScoreResult {
+        public final Long teamId;
+        public final String teamName;
+        public final List<GroupScoreResult> groups;
+        public TeamPollScoreResult(Long teamId, String teamName, List<GroupScoreResult> groups) {
+            this.teamId = teamId;
+            this.teamName = teamName;
+            this.groups = groups;
+        }
+    }
+    public static class GroupScoreResult {
+        public final Long groupId;
+        public final String groupName;
+        public final List<ItemScoreResult> items;
+        public final double groupAverageScore;
+        public final int groupTotalScore;
+        public GroupScoreResult(Long groupId, String groupName, List<ItemScoreResult> items, double groupAverageScore, int groupTotalScore) {
+            this.groupId = groupId;
+            this.groupName = groupName;
+            this.items = items;
+            this.groupAverageScore = groupAverageScore;
+            this.groupTotalScore = groupTotalScore;
+        }
+    }
+    public static class ItemScoreResult {
+        public final Long itemId;
+        public final String itemName;
+        public final double averageScore;
+        public final int totalScore;
+        public ItemScoreResult(Long itemId, String itemName, double averageScore, int totalScore) {
+            this.itemId = itemId;
+            this.itemName = itemName;
+            this.averageScore = averageScore;
+            this.totalScore = totalScore;
+        }
     }
 } 

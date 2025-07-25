@@ -44,4 +44,14 @@ public class PollItemController {
 		return ResponseEntity.ok().build();
 	}
 
+	@PostMapping("/calculate-scores")
+	public ResponseEntity<List<PollItemGroupService.TeamPollScoreResult>> calculateTeamPollScores(@PathVariable("pollId") Long pollId) {
+		return ResponseEntity.ok(pollItemGroupService.calculateTeamPollScores(pollId));
+	}
+
+	@GetMapping("/scores")
+	public ResponseEntity<List<PollItemGroupService.TeamPollScoreResult>> getTeamPollScores(@PathVariable("pollId") Long pollId) {
+		return ResponseEntity.ok(pollItemGroupService.calculateTeamPollScores(pollId));
+	}
+
 }
