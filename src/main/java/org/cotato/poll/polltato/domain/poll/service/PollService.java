@@ -95,6 +95,7 @@ public class PollService {
 				pollId,
 				sessionKey
 			);
+			log.info("Sent poll notification email to user: {}", user.getEmail());
 		}
 
 	}
